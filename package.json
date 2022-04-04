@@ -1,5 +1,5 @@
 {
-    "name": "hardhat-project",
+    "name": "ssap",
     "scripts": {
         "compile": "hardhat compile"
     },
