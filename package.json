@@ -1,0 +1,9 @@
+{
+    "name": "hardhat-project",
+    "scripts": {
+        "compile": "hardhat compile"
+    },
+    "devDependencies": {
+        "hardhat": "^2.9.2"
+    }
+}
