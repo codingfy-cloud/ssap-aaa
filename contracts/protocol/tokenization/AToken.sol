@@ -67,17 +67,6 @@ contract AToken is VersionedInitializable, IncentivizedERC20("ATOKEN_IMPL", "ATO
         string calldata aTokenSymbol,
         bytes calldata params
     ) external override initializer {
-        uint256 chainId;
-
-        //solium-disable-next-line
-        assembly {
-            chainId := chainid()
-        }
-
-        DOMAIN_SEPARATOR = keccak256(
-            abi.encode(EIP712_DOMAIN, keccak256(bytes(aTokenName)), keccak256(EIP712_REVISION), chainId, address(this))
-        );
-
         _setName(aTokenName);
         _setSymbol(aTokenSymbol);
         _setDecimals(aTokenDecimals);
@@ -320,6 +309,17 @@ contract AToken is VersionedInitializable, IncentivizedERC20("ATOKEN_IMPL", "ATO
         require(owner != address(0), "INVALID_OWNER");
         //solium-disable-next-line
         require(block.timestamp <= deadline, "INVALID_EXPIRATION");
+
+        uint256 chainId;
+        //solium-disable-next-line
+        assembly {
+            chainId := chainid()
+        }
+
+        DOMAIN_SEPARATOR = keccak256(
+            abi.encode(EIP712_DOMAIN, keccak256(bytes(name())), keccak256(EIP712_REVISION), chainId, address(this))
+        );
+
         uint256 currentValidNonce = _nonces[owner];
         bytes32 digest = keccak256(
             abi.encodePacked(
