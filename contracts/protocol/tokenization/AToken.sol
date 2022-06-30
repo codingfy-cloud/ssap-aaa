@@ -31,8 +31,6 @@ contract AToken is VersionedInitializable, IncentivizedERC20("ATOKEN_IMPL", "ATO
     /// @dev owner => next valid nonce to submit with permit()
     mapping(address => uint256) public _nonces;
 
-    bytes32 public DOMAIN_SEPARATOR;
-
     ILendingPool internal _pool;
     address internal _treasury;
     address internal _underlyingAsset;
@@ -316,15 +314,19 @@ contract AToken is VersionedInitializable, IncentivizedERC20("ATOKEN_IMPL", "ATO
             chainId := chainid()
         }
 
-        DOMAIN_SEPARATOR = keccak256(
-            abi.encode(EIP712_DOMAIN, keccak256(bytes(name())), keccak256(EIP712_REVISION), chainId, address(this))
-        );
-
         uint256 currentValidNonce = _nonces[owner];
         bytes32 digest = keccak256(
             abi.encodePacked(
                 "\x19\x01",
-                DOMAIN_SEPARATOR,
+                keccak256(
+                    abi.encode(
+                        EIP712_DOMAIN,
+                        keccak256(bytes(name())),
+                        keccak256(EIP712_REVISION),
+                        chainId,
+                        address(this)
+                    )
+                ),
                 keccak256(abi.encode(PERMIT_TYPEHASH, owner, spender, value, currentValidNonce, deadline))
             )
         );
